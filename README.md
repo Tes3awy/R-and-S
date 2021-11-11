@@ -1,4 +1,4 @@
-[Cisco DevNet](https://img.shields.io/badge/Cisco-DevNet-blue?style=flat-square)
+![Cisco DevNet](https://img.shields.io/static/v1?logo=Cisco&label=Cisco&message=DevNet&color=00BCEB&style=flat-square)
 [![Python 3.6+](https://img.shields.io/badge/Python%203.6+-blue.svg?logo=python&logoColor=yellow&color=black&style=flat-square)](https://www.python.org/downloads)
 ![Language](https://img.shields.io/github/languages/top/Tes3awy/R-and-S?label=Python&style=flat-square)
 ![Repo Size](https://img.shields.io/github/repo-size/Tes3awy/R-and-S?label=Repo%20size&style=flat-square)
