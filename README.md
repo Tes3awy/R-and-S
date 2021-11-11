@@ -11,6 +11,14 @@
 
 # Netmiko & Requests Examples for Cisco DevNet
 
+## Table of Contents
+
+1. [Getting Started](#getting-started)
+2. [How to use?](#how-to-use)
+3. [Documentation Links](#documentation-links)
+
+## Getting Started
+
 - In `netmiko_demos` folder, you will find 8 Python demos, `iplist.txt` file, and an explanation of each example.
 
 - In `requests_demos` folder, you will find 3 Python demos, and an explanation of each example.
@@ -39,7 +47,7 @@ or click the **Run** button in the topbar.
 
 ---
 
-## Libraries Documentation Links
+## Documentation Links
 
 Examples in `netmiko` and `requests` folders use some Python libraries. These libraries are:
 
