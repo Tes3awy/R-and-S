@@ -3,17 +3,17 @@ from getpass import getpass
 
 from netmiko import ConnectHandler
 
-username = input("Username: ").strip()
+username = input("Username: ")
 password = getpass("Password: ")
 # You can press enter to leave enable password empty
-enable_pass = getpass("Enable password: ")
+enable_pass = getpass("Enable Password: ")
 
-with open("iplist.txt", "r") as f:
+with open("iplist.txt", "rt") as f:
     iplist = f.read().splitlines()
 
 devices = []
 for ip in iplist:
-    if ip.strip():
+    if ip.strip() != "":
         # append device template to devices variable (empty list)
         devices.append(
             {
@@ -27,11 +27,14 @@ for ip in iplist:
         )
 
 for device in devices:
-    with ConnectHandler(**device) as net_conn:
-        print(f"Connected to {device['ip']}")
-        hostname = net_conn.send_command("show version", use_textfsm=True)[0][
+    print(f"Trying {device['ip']}...", end="\r")
+    with ConnectHandler(**device) as conn:
+        print(f"Connected to {conn.host}:{conn.port}")
+        hostname = conn.send_command("show version", use_textfsm=True)[0][
             "hostname"
         ]
-        run_cfg = net_conn.send_command("show running-config")
-    with open(f"{hostname}_{date.today()}.txt", "w") as f:
-        f.write(run_cfg)
+        run_cfg = conn.send_command("show running-config")
+    with open(f"{hostname}_{date.today()}.txt", "wt") as f:
+        f.write(run_cfg.strip())
+    print(f"Created {f.name}")
+

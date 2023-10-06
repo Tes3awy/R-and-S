@@ -1,16 +1,15 @@
-# imports
-
+# Imports
 from datetime import date
 
 from netmiko import ConnectHandler
 
+# Inputs
 devices = [
     {
         "device_type": "cisco_ios",
         "ip": "sandbox-iosxe-latest-1.cisco.com",
-        "username": "developer",
+        "username": "admin",
         "password": "C1sco12345",
-        "secret": "",
         "fast_cli": False,
     },
     {
@@ -18,27 +17,28 @@ devices = [
         "ip": "192.168.1.150",
         "username": "cisco",
         "password": "cisco",
-        "secret": "",
         "fast_cli": False,
     },
 ]
 
-# create a connection instance to each network device
-# one by one
 for device in devices:
-    with ConnectHandler(**device) as net_conn:
-        print(f"Connected to {device['ip']}")
-        hostname = net_conn.send_command("show version", use_textfsm=True)[0][
+    # create a connection instance to each network device
+    print(f"Trying {device['ip']}...", end="\r")
+    with ConnectHandler(**device) as conn:
+        print(f"Connected to {conn.host}:{conn.port}")
+        # Get the hostname of the device
+        hostname = conn.send_command("show version", use_textfsm=True)[0][
             "hostname"
         ]
-        run_cfg = net_conn.send_command("show running-config")
+        run_cfg = conn.send_command("show running-config")
 
-    print(f"Disconnected from {device['ip']}")
+    print(f"Disconnected from {conn.host}")
 
     # Save output of show running-config command of each device to a text file
     # with the ip of the device (Inside for loop to save each show run of each device)
-    with open(f"{device['ip']}_{date.today()}.txt", "w") as f:
-        f.write(run_cfg)
-    print(f"Saved output of {hostname} ({device['ip']})")
+    with open(f"{device['ip']}_{date.today()}.txt", "wt") as f:
+        f.write(run_cfg.strip())
+    print(f"Saved output of running config of {hostname} ({device['ip']})", end="\n\n")
 
 print("SUCCESS")
+

@@ -1,36 +1,37 @@
+# Imports
 from pprint import pprint
 
 from netmiko import ConnectHandler
 
-# imports
-
-
+# Inputs
 devices = [
     {
         "device_type": "cisco_ios",
         "ip": "sandbox-iosxe-latest-1.cisco.com",
-        "username": "developer",
+        "username": "admin",
         "password": "C1sco12345",
-        "secret": "",
         "fast_cli": False,
     },
     {
-        "device_type": "cisco_ios_telnet",
-        "ip": "192.168.1.150",
-        "username": "cisco",
-        "password": "cisco",
-        "secret": "",
+        "device_type": "cisco_ios",
+        "ip": "sandbox-iosxe-recomm-1.cisco.com",
+        "username": "developer",
+        "password": "",
         "fast_cli": False,
     },
 ]
 
-# create a connection instance to each network device
+# Iterate over devices list of dictionaries
 for device in devices:
-    with ConnectHandler(**device) as net_conn:
-        print(f"Connected to {device['ip']}")
-        facts = net_conn.send_command("show version", use_textfsm=True)
-    print(f"Disconnected from {device['ip']}")
-    # pretty print the output
-    pprint(facts)
+    print(f"Trying {device['ip']}...", end="\r")
+    # Create a connection instance to each network device
+    with ConnectHandler(**device) as conn:
+        print(f"Connected to {conn.host}:{conn.port}")
+        # Added use_textfsm = True to parse the show version output
+        facts = conn.send_command("show version", use_textfsm=True)
+    print(f"Disconnected from {conn.host}")
+    # Use pprint (pretty print) to print the output
+    pprint(facts, indent=4)
 
 print("SUCCESS")
+

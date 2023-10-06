@@ -1,17 +1,16 @@
+# Imports
 from datetime import date
 
 import xlsxwriter
 from netmiko import ConnectHandler
 
-# inputs
-
+# Inputs
 devices = [
     {
         "device_type": "cisco_ios",
         "ip": "sandbox-iosxe-latest-1.cisco.com",
-        "username": "developer",
+        "username": "admin",
         "password": "C1sco12345",
-        "secret": "",
         "fast_cli": False,
     },
     {
@@ -19,40 +18,40 @@ devices = [
         "ip": "192.168.1.150",
         "username": "cisco",
         "password": "cisco",
-        "secret": "",
         "fast_cli": False,
     },
 ]
 
-# create a Workbook (Equivalent to creating a Excel file)
+# Create a Workbook (Equivalent to creating a Excel file)
 wb = xlsxwriter.Workbook(f"Devices-Interface-Brief_{date.today()}.xlsx")
 
 # define a header line in the worksheet
 header = {
     "A1": "Interface Name",  # 0
     "B1": "IP Address",  # 1
-    "C1": "Status (L1)",  # 2
-    "D1": "Protocol (L2)",  # 3
+    "C1": "Status (L1 Status)",  # 2
+    "D1": "Protocol (L2 Status)",  # 3
 }
 
-# processing
+# Processing
 
-# create a connection instance to each network device
+# Create a connection instance to each network device
 # one by one
 for device in devices:
-    with ConnectHandler(**device) as net_conn:
-        print(f"Connected to {device['ip']}")
-        intfs_brief = net_conn.send_command("show ip interface brief", use_textfsm=True)
+    print(f"Trying {device['ip']}...", end="\r")
+    with ConnectHandler(**device) as conn:
+        print(f"Connected to {conn.host}:{conn.port}")
+        intfs_brief = conn.send_command("show ip interface brief", use_textfsm=True)
 
     print(f"Collected interfaces brief of {device['ip']} & closed connection")
 
-    # create seperate sheet of show ip interface brief command
+    # Create seperate sheet of show ip interface brief command
     # for each device in the same Excel file
-    ws = wb.add_worksheet(device["ip"][:31])
+    ws = wb.add_worksheet(device["ip"][:31])  # Max sheet name is 31 chars
 
-    # write the header line in the worksheet
-    for cell, value in header.items():
-        ws.write(cell, value)
+    # Write the header line in the worksheet
+    for cell, val in header.items():
+        ws.write(cell, val)
 
     # add fine tunings to the worksheet
     ws.autofilter("A1:D1")
@@ -75,3 +74,4 @@ for device in devices:
 # close the Excel file (Save the file)
 wb.close()
 print("SUCCESS")
+

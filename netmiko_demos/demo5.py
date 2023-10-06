@@ -1,17 +1,16 @@
+# Imports
 from datetime import date
 
 import xlsxwriter
 from netmiko import ConnectHandler
 
-# inputs
-
+# Inputs
 devices = [
     {
         "device_type": "cisco_ios",
         "ip": "sandbox-iosxe-latest-1.cisco.com",
-        "username": "developer",
+        "username": "admin",
         "password": "C1sco12345",
-        "secret": "",
         "fast_cli": False,
     },
     {
@@ -19,15 +18,14 @@ devices = [
         "ip": "192.168.1.150",
         "username": "cisco",
         "password": "cisco",
-        "secret": "",
         "fast_cli": False,
     },
 ]
 
-# create a Workbook (Equivalent to creating a Excel file)
+# Create an Excel Workbook (Equivalent to creating a Excel file)
 wb = xlsxwriter.Workbook(f"Devices-Facts_{date.today()}.xlsx")
-# create a worksheet (Equivalent to creating a sheet within the Excel file)
-ws = wb.add_worksheet("Devices Facts")
+# Create a worksheet (Equivalent to creating a sheet within the Excel file)
+ws = wb.add_worksheet("Device Facts")
 
 # define a header line in the worksheet
 header = {
@@ -42,17 +40,17 @@ header = {
 }
 
 # write the header line in the worksheet
-for cell, value in header.items():
-    ws.write(cell, value)
+for cell, val in header.items():
+    ws.write(cell, val)
 
-# create a connection instance to each network device
-# one by one
 for device in devices:
-    with ConnectHandler(**device) as net_conn:
-        print(f"Connected to {device['ip']}")
-        facts = net_conn.send_command("show version", use_textfsm=True)
+    # Create a connection instance to each network device
+    print(f"Trying {device['ip']}...", end="\r")
+    with ConnectHandler(**device) as conn:
+        print(f"Connected to {conn.host}:{conn.host}")
+        facts = conn.send_command("show version", use_textfsm=True)
 
-    print(f"Collected facts of {device['ip']} successfully & closed connection")
+    print(f"Collected facts of {conn.host} successfully & closed connection")
 
     # Save parsed output of show version command of each device in the same
     # Excel sheet
@@ -77,6 +75,7 @@ for device in devices:
 
     print(f"Data of {device['ip']} written successfully")
 
-# close the Excel file (Save the file)
+# Close the Excel file (Save the file)
 wb.close()
 print("SUCCESS")
+
