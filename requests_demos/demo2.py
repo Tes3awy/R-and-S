@@ -1,22 +1,25 @@
-# imports
+# Imports
+from pprint import pprint
+
 import requests
 from requests.auth import HTTPBasicAuth as BasicAuth
+from requests.exceptions import HTTPError
 
-# inputs
-url = "https://sandboxdnac.cisco.com/dna/system/api/v1/auth/token"
+# Inputs
+URL = "https://sandboxdnac2.cisco.com/dna/system/api/v1/auth/token"
 username = "devnetuser"
 password = "Cisco123!"
-headers = {"Content-Type": "application/json", "Accept": "application/json"}
+HEADERS = {"Content-Type": "application/json", "Accept": "application/json"}
 
-# processing
+# Processing
 try:
-    r = requests.post(url, headers=headers, auth=BasicAuth(username, password))
+    r = requests.post(URL, headers=HEADERS, auth=BasicAuth(username, password))
     r.raise_for_status()
 # handle errors
-except Exception as e:
-    raise SystemExit(e)
+except HTTPError as e:
+    raise SystemExit(e) from e  # Stop execution if POST request fails to get a token
 # print results only if not errors found
 else:
-    # output
+    # Output
     token = r.json()["Token"]
-    print(token)
+    pprint(token)

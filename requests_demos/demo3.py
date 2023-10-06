@@ -1,30 +1,30 @@
-# imports
+# Imports
 from datetime import date
 
 import requests
 import xlsxwriter
 from requests.auth import HTTPBasicAuth as BasicAuth
 
-# inputs
-url = "https://sandboxdnac.cisco.com/dna/system/api/v1/auth/token"
+# Inputs
+URL = "https://sandboxdnac2.cisco.com/dna/system/api/v1/auth/token"
 username = "devnetuser"
 password = "Cisco123!"
-headers = {"Content-Type": "application/json", "Accept": "application/json"}
+HEADERS = {"Content-Type": "application/json", "Accept": "application/json"}
 
-# processing
+# Processing
 try:
-    r = requests.post(url, headers=headers, auth=BasicAuth(username, password))
+    r = requests.post(URL, headers=HEADERS, auth=BasicAuth(username, password))
     r.raise_for_status()  # raise the exception if HTTP Status Code is NOT 200
 except Exception as e:
-    raise SystemExit(e)
+    raise SystemExit(e) from e
 else:
     print("Successfully authenticated and generated a token")
     # output
     token = r.json()["Token"]
 
     # inputs
-    url = "https://sandboxdnac.cisco.com/dna/intent/api/v1/network-device"
-    headers = {"X-Auth-Token": token, **headers}
+    url = "https://sandboxdnac2.cisco.com/dna/intent/api/v1/network-device"
+    headers = {**HEADERS, "X-Auth-Token": token}
 
     # processing
     r = requests.get(url, headers=headers)
@@ -49,8 +49,8 @@ else:
     ws = wb.add_worksheet("DNA Devices Facts")
 
     # write the header in the worksheet
-    for cell, value in header.items():
-        ws.write(cell, value)
+    for cell, val in header.items():
+        ws.write(cell, val)
 
     # fine tune the worksheet
     ws.autofilter("A1:F1")

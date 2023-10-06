@@ -1,16 +1,19 @@
-# imports
+# Imports
+from pprint import pprint
+
 import requests
 from requests.auth import HTTPBasicAuth as BasicAuth
 
-# inputs
+# Inputs
 url = "https://sandboxdnac.cisco.com/dna/system/api/v1/auth/token"
 username = "devnetuser"
 password = "Cisco123!"
 headers = {"Content-Type": "application/json", "Accept": "application/json"}
 
-# processing
+# Processing
 r = requests.post(url, headers=headers, auth=BasicAuth(username, password))
 
-# output
+# Output
 token = r.json()["Token"]
-print(token)
+pprint(token, indent=4)
+
